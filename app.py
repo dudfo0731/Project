@@ -21,9 +21,10 @@ def setCategory():
 @app.route('/category/data', methods=['POST'])
 def setData():
     category_receive = request.form['category_give']
+    data_receive = request.form['data_give']
 
     index = db.category_info.find_one({'name': category_receive})['index']
-    info ={'subject':'축구', 'content':"최고다!!"}
+    info ={'criteria1': data_receive}
     db["collection"+str(index)].insert_one(info)
 
     return jsonify({'result': 'success'})

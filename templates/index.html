@@ -37,7 +37,7 @@
                 $.ajax({
                     type: "POST",
                     url: "/category/data",
-                    data: {category_give:$("#category-name").val()},
+                    data: {data_give:$("#data-name").val(), category_give:$("#category-name").val()},
                     success: function (response) {
                         alert("저장되었습니다");
                     }
@@ -55,7 +55,13 @@
                         <input id="category-name" class="form-control" placeholder="">
                     </div>
                     <button type="button" class="btn btn-primary" onclick="saveCategory()">카테고리저장</button>
+                    <div class="form-group">
+                        <label for="data-name">Criteria</label>
+                        <input id="data-name" class="form-control" placeholder="">
+                    </div>
+                    </div>
                     <button type="button" class="btn btn-primary" onclick="saveData()">자료저장</button>
+                    <div class="form-group">
                 </div>
             </div>
         </div>
