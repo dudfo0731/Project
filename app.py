@@ -24,7 +24,7 @@ def setData():
     data_receive = request.form['data_give']
 
     index = db.category_info.find_one({'name': category_receive})['index']
-    info ={'criteria1': data_receive}
+    info ={'criteria': data_receive}
     db["collection"+str(index)].insert_one(info)
 
     return jsonify({'result': 'success'})
