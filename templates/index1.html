@@ -8,6 +8,9 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="My Collection Book"/>
+    <meta property="og:description" content="원하는 주제에 맞는 평가를 쉽고 빠르게 저장할 수 있어요!"/>
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.jpg') }}"/>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -85,7 +88,7 @@
 
         function makeReview() {
             // 1. 제목, 저자, 리뷰 내용을 가져옵니다.
-            // 원하는 collection과 연결을 먼저해야함
+            // 원하는 collection과 연결을 먼저해야
             let title = $("#title").val();
             let tasteRate = $("#tasteRate").val();
             let review = $("#bookReview").val();
@@ -109,7 +112,8 @@
             $.ajax({
                 type: "POST",
                 url: "/review",
-                data: {title_give: title, tasteRate_give: tasteRate, review_give: review},  category_give: $("#category-name").val()
+                data: {title_give: title, tasteRate_give: tasteRate, review_give: review},
+                category_give: $("#category-name").val()
                 success: function (response) {
                     if (response["result"] == "success") {
                         alert(response["msg"]);
