@@ -19,11 +19,11 @@ def home():
 def set_category():
     category_receive = request.form['category_give']
 
-    #중복체크
-    #category_receive 데이터가 존재하는지 조회
+    # 중복체크
+    # category_receive 데이터가 존재하는지 조회
     category = db.category_info.find_one({'name': category_receive}, {'_id': False})
     if category is not None:
-        #데이터가 존재하면 저장하지 않음
+        # 데이터가 존재하면 저장하지 않음
         return jsonify({'result': 'false'})
     else:
         index = len(list(db.category_info.find({}))) + 1
@@ -32,12 +32,26 @@ def set_category():
 
     return jsonify({'result': 'success'})
 
+
+@app.route('/category/data', methods=['POST'])
+def set_data():
+    category_receive = request.form['category_give']
+    data_receive = request.form['data_give']
+
+    index = db.category_info.find_one({'name': category_receive})['index']
+    info = {'criteria': data_receive}
+    db["collection" + str(index)].insert_one(info)
+
+    return jsonify({'result': 'success'})
+
+
 @app.route('/category', methods=['GET'])
 def bring_category():
     # 1. DB에서 리뷰 정보 모두 가져오기
     categories = list(db.category_info.find({}, {'_id': 0}))
     # 2. 성공 여부 & 리뷰 목록 반환하기
     return jsonify({'result': 'success', 'categories': categories})
+
 
 @app.route('/review', methods=['POST'])
 def write_review():

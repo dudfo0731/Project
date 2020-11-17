@@ -85,6 +85,7 @@
 
         function makeReview() {
             // 1. 제목, 저자, 리뷰 내용을 가져옵니다.
+            // 원하는 collection과 연결을 먼저해야함
             let title = $("#title").val();
             let tasteRate = $("#tasteRate").val();
             let review = $("#bookReview").val();
@@ -108,7 +109,7 @@
             $.ajax({
                 type: "POST",
                 url: "/review",
-                data: {title_give: title, tasteRate_give: tasteRate, review_give: review},
+                data: {title_give: title, tasteRate_give: tasteRate, review_give: review},  category_give: $("#category-name").val()
                 success: function (response) {
                     if (response["result"] == "success") {
                         alert(response["msg"]);
@@ -117,6 +118,18 @@
                 }
             })
         }
+
+        function saveData() {
+            $.ajax({
+                type: "POST",
+                url: "/category/data",
+                data: {data_give: $("#data-name").val(), category_give: $("#category-name").val()},
+                success: function (response) {
+                    alert("저장되었습니다");
+                }
+            });
+        }
+
 
         function showMemories() {
             // 1. 리뷰 목록을 서버에 요청하기
@@ -185,7 +198,7 @@
                 <option value="new">+ 새로 추가...</option>
             </select>
         </form>
-        <h2>기준값을 설해 주세요!</h2>
+        <h2>기준값을 설정해 주세요!</h2>
         <div class="wrap">
             <div id="post-box" class="form-post" style="display: none;">
                 <div>
