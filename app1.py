@@ -36,13 +36,17 @@ def set_category():
 @app.route('/category/data', methods=['POST'])
 def set_data():
     category_receive = request.form['category_give']
-    data_receive = request.form['data_give']
+    title_receive = request.form['title_give']
+    tasteRate_receive = request.form['tasteRate_give']
+    review_receive = request.form['review_give']
 
     index = db.category_info.find_one({'name': category_receive})['index']
-    info = {'criteria': data_receive}
+    info = {'title': title_receive,
+            'tasteRate': tasteRate_receive,
+            'review': review_receive}
     db["collection" + str(index)].insert_one(info)
 
-    return jsonify({'result': 'success'})
+    return jsonify({'result': 'success', 'msg': '리뷰가 성공적으로 작성되었습니다.'})
 
 
 @app.route('/category', methods=['GET'])
@@ -52,34 +56,12 @@ def bring_category():
     # 2. 성공 여부 & 리뷰 목록 반환하기
     return jsonify({'result': 'success', 'categories': categories})
 
-
-@app.route('/review', methods=['POST'])
-def write_review():
-    # title_receive로 클라이언트가 준 title 가져오기
-    title_receive = request.form['title_give']
-    # author_receive로 클라이언트가 준 author 가져오기
-    tasteRate_receive = request.form['tasteRate_give']
-    # review_receive로 클라이언트가 준 review 가져오기
-    review_receive = request.form['review_give']
-
-    # DB에 삽입할 review 만들기
-    review = {
-        'title': title_receive,
-        'author': tasteRate_receive,
-        'review': review_receive
-    }
-    # reviews에 review 저장하기
-    db.reviews.insert_one(review)
-    # 성공 여부 & 성공 메시지 반환
-    return jsonify({'result': 'success', 'msg': '리뷰가 성공적으로 작성되었습니다.'})
-
-
-@app.route('/review', methods=['GET'])
-def read_reviews():
-    # 1. DB에서 리뷰 정보 모두 가져오기
-    reviews = list(db.reviews.find({}, {'_id': 0}))
-    # 2. 성공 여부 & 리뷰 목록 반환하기
-    return jsonify({'result': 'success', 'reviews': reviews})
+@app.route('/category/data', methods=['GET'])
+def bring_reviews():
+    category_receive = request.args.get('category_give')
+    index = db.category_info.find_one({'name': category_receive})['index']
+    databases = list(db["collection" + str(index)].find({}, {'_id': 0}))
+    return jsonify({'result': 'success', 'reviews': databases})
 
 
 if __name__ == '__main__':
