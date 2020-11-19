@@ -18,6 +18,7 @@ def home():
 @app.route('/category', methods=['POST'])
 def set_category():
     category_receive = request.form['category_give']
+    fields_receive = request.form.getlist('fields_give[]')
 
     # 중복체크
     # category_receive 데이터가 존재하는지 조회
@@ -27,7 +28,11 @@ def set_category():
         return jsonify({'result': 'false'})
     else:
         index = len(list(db.category_info.find({}))) + 1
-        collection = {'name': category_receive, 'index': index}
+        fields = [];
+        for idx, val in enumerate(fields_receive):
+            fields.append({'idx':idx, 'title':val})
+
+        collection = {'name': category_receive, 'index': index, 'fields':fields}
         db.category_info.insert_one(collection)
 
     return jsonify({'result': 'success'})
@@ -35,15 +40,16 @@ def set_category():
 
 @app.route('/category/data', methods=['POST'])
 def set_data():
-    category_receive = request.form['category_give']
-    title_receive = request.form['title_give']
-    tasteRate_receive = request.form['tasteRate_give']
-    review_receive = request.form['review_give']
+    request_recive = request.form.to_dict();
 
-    index = db.category_info.find_one({'name': category_receive})['index']
-    info = {'title': title_receive,
-            'tasteRate': tasteRate_receive,
-            'review': review_receive}
+    index = db.category_info.find_one({'name': request_recive['category_give']})['index']
+    info = {}
+    for i in range(10):
+        try:
+            info['field' + request_recive['fields['+str(i)+'][idx]']] = request_recive['fields['+str(i)+'][content]']
+        except:
+            break
+
     db["collection" + str(index)].insert_one(info)
 
     return jsonify({'result': 'success', 'msg': '리뷰가 성공적으로 작성되었습니다.'})
@@ -61,7 +67,8 @@ def bring_reviews():
     category_receive = request.args.get('category_give')
     index = db.category_info.find_one({'name': category_receive})['index']
     databases = list(db["collection" + str(index)].find({}, {'_id': 0}))
-    return jsonify({'result': 'success', 'reviews': databases})
+    category = db.category_info.find_one({'name': category_receive}, {'_id': False})
+    return jsonify({'result': 'success', 'reviews': databases, 'category':category})
 
 
 if __name__ == '__main__':
