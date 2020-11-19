@@ -44,25 +44,31 @@
         }
 
         function saveCategory() {
+
             let fields = [];
             $("input[name=category_field]").each(function (idx) {
                 fields.push($("input[name=category_field]:eq(" + idx + ")").val());
             });
 
-            $.ajax({
-                type: "POST",
-                url: "/category",
-                data: {category_give: $("#category-name").val(), fields_give:fields},
-                success: function (response) {
-                    if (response['result'] == 'false') {
-                        alert("중복된 값입니다.")
-                    } else {
-                        alert("저장되었습니다");
-                        showCategories();
-                        $("#post-box").hide();
+            if ($("#category-name").val() == '') {
+                alert("카테고리를 입력해주세요!");
+                return;
+            } else
+
+                $.ajax({
+                    type: "POST",
+                    url: "/category",
+                    data: {category_give: $("#category-name").val(), fields_give: fields},
+                    success: function (response) {
+                        if (response['result'] == 'false') {
+                            alert("중복된 값입니다.")
+                        } else {
+                            alert("저장되었습니다");
+                            showCategories();
+                            $("#post-box").hide();
+                        }
                     }
-                }
-            });
+                });
         }
 
         function showCategories() {
@@ -103,12 +109,12 @@
 
         function saveData() {
             for (let i = 0; i < fields.length; i++) {
-                if(!$("#field"+fields[i]['idx']).val()){
+                if (!$("#field" + fields[i]['idx']).val()) {
                     alert(`${fields[i]['title']}를 입력해주세요`);
-                    $("#"+fields[i]['idx']).focus();
+                    $("#" + fields[i]['idx']).focus();
                     return;
                 } else {
-                    fields[i]['content'] = $("#field"+fields[i]['idx']).val();
+                    fields[i]['content'] = $("#field" + fields[i]['idx']).val();
                 }
             }
 
@@ -118,7 +124,7 @@
                 type: "POST",
                 url: "/category/data",
                 data: {
-                    fields:fields,
+                    fields: fields,
                     category_give: $("#category").val()
                 },
                 success: function (response) {
@@ -132,7 +138,9 @@
                 }
             })
         }
+
         let fields = []
+
         function showMemories() {
             // 1. 리뷰 목록을 서버에 요청하기
             $("#reviews-box").empty();
@@ -166,7 +174,7 @@
         function makeCard(review, fields) {
             let tempHtml = '<tr>';
             for (let i = 0; i < fields.length; i++) {
-                tempHtml += `<td>${review['field'+fields[i]['idx']]}</td>`;
+                tempHtml += `<td>${review['field' + fields[i]['idx']]}</td>`;
             }
             tempHtml += '</tr>'
             $("#reviews-box").append(tempHtml);
@@ -232,14 +240,14 @@
 
             </select>
         </form>
-        <h2>기준값을 설정해 주세요!</h2>
         <div class="wrap">
             <div id="post-box" class="form-post" style="display: none;">
                 <div>
                     <div class="form-group">
                         <label for="category-name">카테고리명</label>
-                        <input id="category-name" class="form-control" placeholder="">
+                        <input id="category-name" class="form-control" placeholder="카테고리명">
                     </div>
+                    <label for="field-area">필드명</label>
                     <div id="field-area">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="필드명" name="category_field"
@@ -248,8 +256,8 @@
                                 <span class="input-group-text" id="basic-addon2" onclick="addField()">+</span>
                             </div>
                         </div>
+                        <button type="button" class="btn btn-primary" onclick="saveCategory()">카테고리 저장</button>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="saveCategory()">카테고리 저장</button>
                 </div>
             </div>
         </div>
